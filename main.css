@@ -1,4 +1,79 @@
-form {
+@font-face {
+    font-family: 'museo-slab';
+    src: url('type/Museo_Slab_500-webfont.eot');
+    src: url('type/Museo_Slab_500-webfont.eot?#iefix') format('embedded-opentype'),
+         url('type/Museo_Slab_500-webfont.woff') format('woff'),
+         url('type/Museo_Slab_500-webfont.ttf') format('truetype'),
+         url('type/Museo_Slab_500-webfont.svg#webfontyumMOUTD') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'icons';
+    src: url('icons/icons.svg#datepickericons') format('svg');
+}
+
+.wrapper {
+    width: 300px;
+}
+
+ol {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+}
+
+li a {
+    display: block;
+    color: #555;
+    text-decoration: none;
+    padding: 10px 0;
+}
+
+.years li {
+    float: left;
+    width: 33.333333%;
+    text-align: center;
+    font-family: museo-slab;
+    font-size: 20px;
+    background-color: #f7f7f7;
+}
+
+.years li:nth-child(2n+2) {
+    background-color: #dedede;
+}
+
+.yearNav {
+    text-indent: -9999px;
+    display: block;
+    position: relative;
+    padding: 0px 0 8px;
+    background-color: #DE4E43;
+    text-decoration: none;
+    color: #EDB951;
+}
+
+.yearNav:before {
+    position: absolute;
+    left: 50%;
+    text-indent: 0;
+    margin-left: -10px;
+    font-family: icons;
+    font-size: 20px;
+    line-height: 1.4;
+}
+
+.pastYears:before {
+    content: '+';
+}
+
+.futureYears:before {
+    content: '-';
+}
+
+/*form {
     width: 300px;
 }
 
@@ -97,8 +172,6 @@ li {
     margin: 0 5% 5px;
     width: 90%;
     background: #fff;
-    border: 2px solid #333;
-    border-radius: 5px;
 }
 
 .dp_wrapper .dp_years .dp_year:hover,
@@ -155,4 +228,4 @@ li {
 
 .size1of7 {
     width: 14.2857%;
-}
+}*/

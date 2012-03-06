@@ -49,7 +49,7 @@ function DatePicker(input, options) {
 //            'November',
 //            'December'
 //        ],
-        position: 'absolute',
+        position: 'default',
         where: 'top'
     }
     this.uniqueClass = 'dp_input_' + Math.floor(Math.random()*11);
@@ -157,16 +157,19 @@ DatePicker.prototype.build = {
             start = range.start,
             end   = range.end;
             
-        div.push('<div class="dp_year_wrapper">');
-        
         if ( that.config.year.infinite ) {
             div.push('<span class="dp_year_past">Up</span>');
         }
+        
+        div.push('<ol class="dp_year_wrapper">');
+        
 
         // Build year list
         for ( var i=start; i<(end + 1); i++ ) {
-            div.push('<span class="dp_year">' + i + '</span>');
+            div.push('<li class="dp_year">' + i + '</li>');
         }
+        
+        div.push('</ol>');
         
         if ( that.config.year.infinite ) {
             div.push('<span class="dp_year_future">Down</span>');
