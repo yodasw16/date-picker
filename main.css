@@ -1,158 +1,194 @@
-form {
+@font-face {
+    font-family: 'museo-slab';
+    src: url('type/Museo_Slab_500-webfont.eot');
+    src: url('type/Museo_Slab_500-webfont.eot?#iefix') format('embedded-opentype'),
+         url('type/Museo_Slab_500-webfont.woff') format('woff'),
+         url('type/Museo_Slab_500-webfont.ttf') format('truetype'),
+         url('type/Museo_Slab_500-webfont.svg#webfontyumMOUTD') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'icons';
+    src: url('icons/icons.svg#datepickericons') format('svg');
+}
+
+html {
+    font: 100% museo-slab;
+}
+
+.wrapper, form {
     width: 300px;
 }
 
-input {
-    width: 100%;
+.dp_choice::selection, .dp_choice ol::selection, .dp_choice ol li::selection, .dp_choice span::selection {
+    background-color: transparent;
 }
 
-.dp_wrapper {
-    clear: both;
-    display: block;
-    max-width: 100%;
-}
-
-.dp_wrapper .dp_years {
-    display: block;
-    clear: both;
-    overflow: hidden;
-}
-
-.dp_wrapper.absolute.top {
-    position: relative;
-}
-
-.dp_wrapper.absolute.top .dp_choice {
-    position: absolute;
-    right: 0;
-    bottom: 0px;
-}
-
-.dp_wrapper .dp_year_future,
-.dp_wrapper .dp_year_past {
-    width: 100%;
-    font-size: 11px;
-    display: block;
-    float: none;
-    clear: both;
-    text-align: center;
-    padding: 3px 0;
-    background: #ccc;
-    cursor: pointer;
-}
-
-.dp_wrapper .dp_year_future:hover,
-.dp_wrapper .dp_year_past:hover {
-    background: #999; 
-}
-
-.dp_wrapper .dp_years .dp_year, 
-.dp_wrapper .dp_month_wrapper .dp_month {
-    float: left;
-    padding: 3px 5px;
-    cursor: pointer;
-    text-decoration: underline;
-    text-align: center;
-    width: 28.33333%;
-}
-
-.dp_wrapper .dp_day {
-    cursor: pointer;
-    text-decoration: underline;
-}
-
-.dp_wrapper .dp_day:hover {
-    text-decoration: none;
-}
-
-.dp_wrapper .dp_day.dp_empty_day,
-.dp_wrapper .dp_day.dp_day_header {
-    text-decoration: none;
-}
-
-.dp_wrapper .dp_day.dp_day_header {
-    background: #999;
-}
-
-.dp_wrapper .dp_day.dp_day_0,
-.dp_wrapper .dp_day.dp_day_6 {
-    background: #ccc;
-}
-
-ul {
-    margin: 0 0;
-    padding: 0 0;
-}
-
-li {
-    margin: 0 0;
-    padding: 0 0;
+ol {
     list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+}
+
+.dp_choice {
+    margin: 5px 0 15px;
+}
+
+.current {
+    background-color: #EDB951;
+}
+
+.dp_years, .dp_months {
+    box-shadow: 0 0 1px rgba(0,0,0,.5);
+}
+
+.dp_choice li {
     float: left;
-    width: 10%;
     text-align: center;
-}
-
-.dp_wrapper .dp_choice {
-    margin: 0 5% 5px;
-    width: 90%;
-    background: #fff;
-    border: 2px solid #333;
-    border-radius: 5px;
-}
-
-.dp_wrapper .dp_years .dp_year:hover,
-.dp_wrapper .dp_month_wrapper .dp_month:hover {
-    text-decoration: none;
-}
-
-.dp_wrapper .dp_full_list .dp_year_wrapper {
-    display: none;
-}
-
-.dp_wrapper .dp_full_list .dp_viewFullList {
+    font-family: museo-slab;
+    font-size: 20px;
+    background-color: #f7f7f7;
+    padding: 10px 0;
+    color: #555;
     display: block;
-    clear: both;
-    text-align: center;
-    padding: 3px 0;
-    text-decoration: underline;
     cursor: pointer;
 }
 
-.dp_wrapper .dp_full_list .dp_viewFullList:hover {
+.dp_years li, .dp_months li {
+    width: 33.333333%;
+}
+
+.dp_years li:nth-child(2n+2), .dp_months li:nth-child(2n+2) {
+    background-color: #dedede;
+}
+
+.dp_yearNav {
+    text-indent: -9999px;
+    display: block;
+    position: relative;
+    padding: 0px 0 8px;
+    background-color: #DE4E43;
     text-decoration: none;
+    color: #fff;
+    cursor: pointer;
+}
+
+.dp_yearNav:before {
+    position: absolute;
+    left: 50%;
+    text-indent: 0;
+    margin-left: -10px;
+    font-family: icons;
+    font-size: 20px;
+    line-height: 1.4;
+}
+
+.dp_pastYears:before {
+    content: '+';
+}
+
+.dp_futureYears:before {
+    content: '-';
+}
+
+.dp_days {
+    position: relative;
+    zoom: 1;
+    vertical-align: top;
+    text-align: left;
+}
+
+.dp_days table {
+    width: 100%;
+    table-layout: fixed;
+    text-align: center;
+    border-spacing: 0;
+    border-collapse: collapse;
+    font-family: museo-slab;
+    font-size: 18px;
+}
+
+.dp_days th {
+    background-color: #DE4E43;
+    color: #fff;
+}
+
+.dp_days th, .dp_days td {
+    border: 1px solid #dedede;
+    padding: 10px;
+    font-weight: normal;
+}
+
+.dp_days td {
+    cursor: pointer;
+}
+
+.dp_days th {
+    pointer-events: none;
+}
+
+.dp_empty_day {
+    background-color: #dedede;
+    pointer-events: none;
+}
+
+.dp_years li:hover, .dp_months li:hover, .dp_days td:hover {
+    background-color: #B1D1E0;
 }
 
 .dp_tagBox {
-    border: 1px solid #999;
+    width: 96%;
+    background: -webkit-gradient(linear,left top,left bottom,color-stop(0.0,white),color-stop(1.0,#EAEAEA));
+    background: -moz-linear-gradient(top,white,#EAEAEA);
+    background: -webkit-gradient(linear,left top,left bottom,color-stop(0.0,white),color-stop(1.0,#EAEAEA));
+    border: 1px solid #CACACA;
+    color: #444;
     float: left;
-    display: block;
-    padding: 1% 2%;
-    width: 95%;
+    font-size: 1.6em;
+    padding: 2%;
+    cursor: text;
+    margin-bottom: 5px;
 }
 
 .dp_tagBox input {
     border: none;
-    width: 30%;
-    float: left;
+    width: 10%;
+    background-color: transparent;
 }
+
 .dp_tagBox input:focus {
     outline: none;
 }
 
-.dp_tagBox span {
-    margin-right: 5px;
-    padding: 3px 5px;
-    background: #be1;
-    border-radius: 5px;
-    float: left;
+input[type="submit"] {
+    background: -webkit-gradient(linear,left top,left bottom,color-stop(0.0,white),color-stop(1.0,#DEDEDE));
+    background: -moz-linear-gradient(top,white,#EAEAEA);
+    background: -webkit-gradient(linear,left top,left bottom,color-stop(0.0,white),color-stop(1.0,#DEDEDE));
+    border: 1px solid #dedede;
+    border-radius: 10px;
+    float: right;
+    font-size: 1em;
+    padding: 2% 3%;
+    margin: 0;
     cursor: pointer;
 }
 
-.dp_tagBox span:hover {
-    background: #7a990c;
+.dp_tag {
+    margin-right: 2%;
+    padding: 1% 2%;
+    float: left;
+    cursor: pointer;
+    background: #B1D1E0;
+    font-size: .9em;
 }
 
-.size1of7 {
-    width: 14.2857%;
+.dp_tag:hover {
+    background: #c9dfea;
+}
+
+.dp_tag a {
+    
 }
