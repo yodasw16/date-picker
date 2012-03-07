@@ -23,18 +23,18 @@ function DatePicker(input, options) {
             day: ''
         },
         months: {
-            '0': 'January',
-            '1': 'February',
-            '2': 'March',
-            '3': 'April',
+            '0': 'Jan',
+            '1': 'Feb',
+            '2': 'Mar',
+            '3': 'Apr',
             '4': 'May',
-            '5': 'June',
-            '6': 'July',
-            '7': 'August',
-            '8': 'September',
-            '9': 'October',
-            '10': 'November',
-            '11': 'December'
+            '5': 'Jun',
+            '6': 'Jul',
+            '7': 'Aug',
+            '8': 'Sep',
+            '9': 'Oct',
+            '10': 'Nov',
+            '11': 'Dec'
         },
 //            'January',
 //            'February',
@@ -82,6 +82,7 @@ DatePicker.prototype.init = function() {
     this.bind.blurTagBoxInput(this);
     this.bind.yearFuture(this);
     this.bind.yearPast(this);
+    this.bind.forceFocusOnInput(this);
     
     return true;
 }
@@ -158,10 +159,10 @@ DatePicker.prototype.build = {
             end   = range.end;
             
         if ( that.config.year.infinite ) {
-            div.push('<span class="dp_year_past">Up</span>');
+            div.push('<span class="dp_pastYears dp_yearNav">Past</span>');
         }
         
-        div.push('<ol class="dp_year_wrapper">');
+        div.push('<ol>');
         
 
         // Build year list
@@ -172,7 +173,7 @@ DatePicker.prototype.build = {
         div.push('</ol>');
         
         if ( that.config.year.infinite ) {
-            div.push('<span class="dp_year_future">Down</span>');
+            div.push('<span class="dp_futureYears dp_yearNav">Future</span>');
         }
         
         div.push('</div>');
@@ -188,13 +189,17 @@ DatePicker.prototype.build = {
     months: function(dpObj) {
         var that   = dpObj,
             months = that.config.months,
-            div    = ['<div class="dp_month_wrapper dp_choice">'];
+            div    = ['<div class="dp_months dp_choice">'];
 
+        div.push('<ol>');
+        
         for ( var month in months ) {
             if ( months.hasOwnProperty(month) ) {
-                div.push('<span class="dp_month" data-month="' + month + '">' + months[month] + '</span>');
+                div.push('<li class="dp_month" data-month="' + month + '">' + months[month] + '</li>');
             }
         }
+        
+        div.push('</ol>');
 
         div.push('</div>');
 
@@ -216,35 +221,49 @@ DatePicker.prototype.build = {
                 
         var date = new Date(year, month, 1),
             day  = date.getDay(),
-            days = ['<div class="dp_choice dp_days>">', '<ul>'];
+            days = ['<div class="dp_choice dp_days">', '<table>', '<tr>'];
         
         // Prepend Days of Week Headers
-        days.push('<li class="dp_day dp_day_header size1of7">S</li>');
-        days.push('<li class="dp_day dp_day_header size1of7">M</li>');
-        days.push('<li class="dp_day dp_day_header size1of7">T</li>');
-        days.push('<li class="dp_day dp_day_header size1of7">W</li>');
-        days.push('<li class="dp_day dp_day_header size1of7">T</li>');
-        days.push('<li class="dp_day dp_day_header size1of7">F</li>');
-        days.push('<li class="dp_day dp_day_header size1of7">S</li>');
+        days.push('<th>S</th>');
+        days.push('<th>M</th>');
+        days.push('<th>T</th>');
+        days.push('<th>W</th>');
+        days.push('<th>T</th>');
+        days.push('<th>F</th>');
+        days.push('<th>S</th>');
         
+        days.push('</tr>');
+        days.push('<tr>');
         
         // Prepend empty days
         for ( var p=0; p<day; p++ ) {
-            days.push('<li class="dp_day dp_empty_day size1of7">-</li>');
+            days.push('<td class="dp_day dp_empty_day"></td>');
         }
         
         // Build days
         for ( var i=1; i<howManyDays; i++ ) {
-            days.push('<li class="dp_day size1of7 dp_day_' + day + '">' + i + '</li>');
+            days.push('<td class="dp_day dp_day_' + day + '">' + i + '</td>');
             
             if ( 6 == day ) {
                 day = 0;
+                days.push('</tr>');
+                days.push('<tr>');
             } else {
                 day++;
             }
         }
         
-        days.push('</ul>');
+        // Append empty days
+        if ( 0 != day ) {
+            var daysLeft = 7-day;
+            
+            for ( var d=0; d<daysLeft; d++) {
+                days.push('<td class="dp_day dp_empty_day"></td>');
+            }
+        }
+        
+        days.push('</tr>');
+        days.push('</table>');
         days.push('</div>');
         
         return days.join('');
@@ -265,7 +284,22 @@ DatePicker.prototype.bind = {
         var that = dpObj;
 
         that.wrapper.on('focus', 'input', function() {
-            that.showCorrectDateChoice();
+            if ( that.wrapper.find('.dp_choice').size() == 0 ) {
+                that.showCorrectDateChoice();
+            }
+        });
+    },
+    /**
+     * Forces the input to be focused
+     * 
+     * @param {!DatePicker} dpObj
+     * @return {undefined}
+     */
+    forceFocusOnInput: function(dpObj) {
+        var that = dpObj;
+        
+        that.wrapper.on('click', '.dp_tagBox', function() {
+            that.wrapper.find('input').focus();
         });
     },
     /**
@@ -278,7 +312,6 @@ DatePicker.prototype.bind = {
         var that = dpObj;
         
         that.wrapper.on('blur', 'input', function() {
-            console.log('blur');
             //that.wrapper.find('.dp_choice').remove();
         });
     },
@@ -416,7 +449,7 @@ DatePicker.prototype.bind = {
         var that       = dpObj,
             yearConfig = that.config.year;
             
-        that.wrapper.on('click', '.dp_year_future', function(e) {
+        that.wrapper.on('click', '.dp_futureYears', function(e) {
             e.preventDefault();
             
             yearConfig.rangeChange = yearConfig.rangeChange + 9;
@@ -436,7 +469,7 @@ DatePicker.prototype.bind = {
         var that       = dpObj,
             yearConfig = that.config.year;
             
-        that.wrapper.on('click', '.dp_year_past', function(e) {
+        that.wrapper.on('click', '.dp_pastYears', function(e) {
             e.preventDefault();
             
             yearConfig.rangeChange = yearConfig.rangeChange - 9;
