@@ -1,6 +1,6 @@
-# Trying to come up with a better UI for date pickers
+Trying to come up with a better UI for date pickers
 
-## TODO's
+TODO's
 
 * Fix year navigation arrows
 * Disable zoom on input focus for mobile
