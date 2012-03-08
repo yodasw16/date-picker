@@ -126,6 +126,11 @@ ol {
     cursor: pointer;
 }
 
+td.time_today, li.time_today {
+    background:#e36960;
+    color:#fff;
+}
+
 .dp_days th {
     pointer-events: none;
 }
