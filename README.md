@@ -3,7 +3,7 @@
 ## TODO's
 
 * Fix year navigation arrows
-* Disable zoom on input focus for mobile
+* ~~Disable zoom on input focus for mobile~~
 * Documentation
 * Highlight the current year, month, day
 * Dynamic positioning
