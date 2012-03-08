@@ -126,7 +126,7 @@ ol {
     cursor: pointer;
 }
 
-td.time_today, li.time_today {
+td.dp_current, li.dp_current {
     background:#e36960;
     color:#fff;
 }

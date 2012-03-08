@@ -9,8 +9,7 @@
  */
 function DatePicker(input, options) {
 
-    var t = new Date();
-
+    this.date = new Date();
     this.input  = input;
     this.config = {
         spacer: '/',
@@ -54,9 +53,9 @@ function DatePicker(input, options) {
 //        ],
         position: 'default',
         where: 'top',
-        currentDay : t.getDate(),
-        currentMonth : t.getMonth(),
-        currentYear  : t.getFullYear()
+        currentDay : this.date.getDate(),
+        currentMonth : this.date.getMonth(),
+        currentYear  : this.date.getFullYear()
     }
     this.uniqueClass = 'dp_input_' + Math.floor(Math.random()*11);
     this.wrapper     = undefined;
@@ -174,10 +173,11 @@ DatePicker.prototype.build = {
         // Build year list
         for ( var i=start; i<(end + 1); i++ ) {
             if(i == that.config.currentYear){
-                div.push('<li class="dp_year time_today">' + i + '</li>');
+                div.push('<li class="dp_year dp_current">' + i + '</li>');
             }
-            else
+            else {
                 div.push('<li class="dp_year">' + i + '</li>');
+            }
         }
         
         div.push('</ol>');
@@ -206,10 +206,11 @@ DatePicker.prototype.build = {
         for ( var month in months ) {
             if ( months.hasOwnProperty(month) ) {
                 if(month == that.config.currentMonth) {
-                    div.push('<li class="dp_month time_today" data-month="' + month + '">' + months[month] + '</li>');
+                    div.push('<li class="dp_month dp_current" data-month="' + month + '">' + months[month] + '</li>');
                 }
-                else
+                else {
                     div.push('<li class="dp_month" data-month="' + month + '">' + months[month] + '</li>');
+                }
             }
         }
         
@@ -256,10 +257,12 @@ DatePicker.prototype.build = {
         
         // Build days
         for ( var i=1; i<howManyDays; i++ ) {
-            if(i == that.config.currentDay)
-               days.push('<td class="dp_day dp_day_' + day + ' time_today">' + i + '</td>'); 
-            else
+            if(i == that.config.currentDay) {
+               days.push('<td class="dp_day dp_day_' + day + ' dp_current">' + i + '</td>');
+            }
+            else {
                 days.push('<td class="dp_day dp_day_' + day + ' ">' + i + '</td>');
+            }
             
             if ( 6 == day ) {
                 day = 0;
