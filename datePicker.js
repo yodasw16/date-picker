@@ -207,7 +207,7 @@ DatePicker.prototype.build = {
     },
     days: function(dpObj) {
         var that               = dpObj,
-            days_in_each_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
+            days_in_each_month = [32, 29, 32, 31, 32, 31, 32, 32, 31, 32, 31, 32],
             year               = that.config.selected.year,
             month              = that.config.selected.month,
             howManyDays        = days_in_each_month[month];
@@ -215,7 +215,7 @@ DatePicker.prototype.build = {
         // February Leap Year Check
         if ( month == 1 ) {
             if ( (year % 4 == 0 && year % 100 != 0) || year % 400 == 0 ) {
-                howManyDays = 29;
+                howManyDays = 30;
             }
         }
                 
