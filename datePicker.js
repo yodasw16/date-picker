@@ -173,7 +173,6 @@ DatePicker.prototype.build = {
 
         // Build year list
         for ( var i=start; i<(end + 1); i++ ) {
-            console.log(i);
             if(i == that.config.currentYear){
                 div.push('<li class="dp_year time_today">' + i + '</li>');
             }
@@ -208,7 +207,6 @@ DatePicker.prototype.build = {
             if ( months.hasOwnProperty(month) ) {
                 if(month == that.config.currentMonth) {
                     div.push('<li class="dp_month time_today" data-month="' + month + '">' + months[month] + '</li>');
-                    console.log(month);
                 }
                 else
                     div.push('<li class="dp_month" data-month="' + month + '">' + months[month] + '</li>');
