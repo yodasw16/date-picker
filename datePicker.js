@@ -241,7 +241,7 @@ DatePicker.prototype.build = {
         }
         
         // Build days
-        for ( var i=1; i<howManyDays; i++ ) {
+        for ( var i=1; i<=howManyDays; i++ ) {
             days.push('<td class="dp_day dp_day_' + day + '">' + i + '</td>');
             
             if ( 6 == day ) {
