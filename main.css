@@ -147,7 +147,7 @@ ol {
     border: 1px solid #CACACA;
     color: #444;
     float: left;
-    font-size: 1.6em;
+    font-size: 1.4em;
     padding: 2%;
     cursor: text;
     margin-bottom: 5px;
@@ -157,6 +157,7 @@ ol {
     border: none;
     width: 10%;
     background-color: transparent;
+    font-size: .8em;
 }
 
 .dp_tagBox input:focus {
@@ -182,7 +183,7 @@ input[type="submit"] {
     float: left;
     cursor: pointer;
     background: #B1D1E0;
-    font-size: .9em;
+    font-size: 1.1em;
 }
 
 .dp_tag:hover {
