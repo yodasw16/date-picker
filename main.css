@@ -37,10 +37,6 @@ ol {
     margin: 5px 0 15px;
 }
 
-.current {
-    background-color: #EDB951;
-}
-
 .dp_years, .dp_months {
     box-shadow: 0 0 1px rgba(0,0,0,.5);
 }
@@ -51,7 +47,7 @@ ol {
     font-family: museo-slab;
     font-size: 20px;
     background-color: #f7f7f7;
-    padding: 10px 0;
+    padding: 15px 0;
     color: #555;
     display: block;
     cursor: pointer;
@@ -68,30 +64,19 @@ ol {
 .dp_yearNav {
     text-indent: -9999px;
     display: block;
-    position: relative;
-    padding: 0px 0 8px;
-    background-color: #DE4E43;
+    background: #DE4E43 url(icons/icons.png) no-repeat 0 0;
+    height: 30px;
+    padding: 10px 0;
     text-decoration: none;
-    color: #fff;
     cursor: pointer;
 }
 
-.dp_yearNav:before {
-    position: absolute;
-    left: 50%;
-    text-indent: 0;
-    margin-left: -10px;
-    font-family: icons;
-    font-size: 20px;
-    line-height: 1.4;
+.dp_pastYears {
+    background-position: 50% 0;
 }
 
-.dp_pastYears:before {
-    content: '+';
-}
-
-.dp_futureYears:before {
-    content: '-';
+.dp_futureYears {
+    background-position: 50% -40px;
 }
 
 .dp_days {
