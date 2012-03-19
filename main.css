@@ -18,6 +18,10 @@ html {
     font: 100% museo-slab;
 }
 
+footer {
+    margin-top: 2em;
+}
+
 .wrapper, form {
     width: 300px;
 }
@@ -175,6 +179,17 @@ input[type="submit"] {
     background: #c9dfea;
 }
 
-.dp_tag a {
-    
+/* clearfix */
+.group:before,
+.group:after {
+    content: "";
+    display: table;
+}
+
+.group:after {
+    clear: both;
+}
+
+.group {
+    zoom: 1;
 }
