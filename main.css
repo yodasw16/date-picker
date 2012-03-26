@@ -115,6 +115,11 @@ ol {
     cursor: pointer;
 }
 
+td.dp_current, li.dp_current {
+    background:#e36960;
+    color:#fff;
+}
+
 .dp_days th {
     pointer-events: none;
 }
