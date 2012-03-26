@@ -245,7 +245,9 @@ DatePicker.prototype.build = {
         
         // Build days
         for ( var i=1; i<howManyDays; i++ ) {
-            if(i == that.config.currentDay && that.config.selected.year == that.config.currentYear) {
+            if(i == that.config.currentDay 
+                && that.config.selected.year == that.config.currentYear
+                && that.config.selected.month == that.config.currentMonth) {
                days.push('<td class="dp_day dp_day_' + day + ' dp_current">' + i + '</td>');
             }
             else {
