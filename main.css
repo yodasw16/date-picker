@@ -116,8 +116,7 @@ ol {
 }
 
 td.dp_current, li.dp_current {
-    background:#e36960;
-    color:#fff;
+    background:#B1D1E0;
 }
 
 .dp_days th {
@@ -130,7 +129,7 @@ td.dp_current, li.dp_current {
 }
 
 .dp_years li:hover, .dp_months li:hover, .dp_days td:hover {
-    background-color: #B1D1E0;
+    background-color: #C9DFEA;
 }
 
 .dp_tagBox {
