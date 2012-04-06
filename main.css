@@ -197,3 +197,15 @@ input[type="submit"] {
 li.dp_current, td.dp_current, .dp_months li.dp_current  {
     background:#B1D1E0;
 }
+
+.dp_tagBox span+input {
+    width:65%;
+}
+
+.dp_tagBox span+span+input {
+    width:45%;
+}
+
+.dp_tagBox span+span+span+input {
+    width:35%;
+}

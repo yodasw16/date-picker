@@ -546,8 +546,13 @@ DatePicker.prototype.buildTagBox = function() {
         classes += (' ' + config.position + ' ' + config.where);
     }
     
-    var div = '<div class="' + classes + '"><div class="dp_tagBox"><input type="text"></div></div>';
-    
+    var div = $('<div class="' + classes + '"></div>');
+    var $input = $('<div class="dp_tagBox"><input type="text"></div>').on('focusout', function(){
+        $('.dp_wrapper .dp_choice').toggle();
+    }).on('focusin', function(){
+        $('.dp_wrapper .dp_choice').toggle();
+    }).appendTo(div);
+
     return div;
 }
 
