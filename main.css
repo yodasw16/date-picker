@@ -115,10 +115,6 @@ ol {
     cursor: pointer;
 }
 
-td.dp_current, li.dp_current {
-    background:#B1D1E0;
-}
-
 .dp_days th {
     pointer-events: none;
 }
@@ -196,4 +192,8 @@ input[type="submit"] {
 
 .group {
     zoom: 1;
+}
+
+li.dp_current, td.dp_current, .dp_months li.dp_current  {
+    background:#B1D1E0;
 }
