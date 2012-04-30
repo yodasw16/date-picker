@@ -1,1 +1,5 @@
 nbproject
+.DS_Store
+fire_app_log.txt
+*.swp
+.sass-cache
