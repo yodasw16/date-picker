@@ -1,21 +1,5 @@
-@font-face {
-    font-family: 'museo-slab';
-    src: url('type/Museo_Slab_500-webfont.eot');
-    src: url('type/Museo_Slab_500-webfont.eot?#iefix') format('embedded-opentype'),
-         url('type/Museo_Slab_500-webfont.woff') format('woff'),
-         url('type/Museo_Slab_500-webfont.ttf') format('truetype'),
-         url('type/Museo_Slab_500-webfont.svg#webfontyumMOUTD') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'icons';
-    src: url('icons/icons.svg#datepickericons') format('svg');
-}
-
 html {
-    font: 100% museo-slab;
+    font: 100% sans-serif;
 }
 
 footer {
@@ -35,6 +19,7 @@ ol {
     margin: 0;
     padding: 0;
     display: inline-block;
+    width: 100%;
 }
 
 .dp_choice {
@@ -48,7 +33,6 @@ ol {
 .dp_choice li {
     float: left;
     text-align: center;
-    font-family: museo-slab;
     font-size: 20px;
     background-color: #f7f7f7;
     padding: 15px 0;
@@ -68,7 +52,7 @@ ol {
 .dp_yearNav {
     text-indent: -9999px;
     display: block;
-    background: #DE4E43 url(icons/icons.png) no-repeat 0 0;
+    background: #666 url(icons/icons.png) no-repeat 0 0;
     height: 30px;
     padding: 10px 0;
     text-decoration: none;
@@ -96,12 +80,11 @@ ol {
     text-align: center;
     border-spacing: 0;
     border-collapse: collapse;
-    font-family: museo-slab;
     font-size: 18px;
 }
 
-.dp_days th {
-    background-color: #DE4E43;
+.dp_days th, .dp_tag:hover {
+    background-color: #666;
     color: #fff;
 }
 
@@ -116,7 +99,8 @@ ol {
 }
 
 td.dp_current, li.dp_current {
-    background:#B1D1E0;
+    background: #333;
+    color: #fff;
 }
 
 .dp_days th {
@@ -129,7 +113,8 @@ td.dp_current, li.dp_current {
 }
 
 .dp_years li:hover, .dp_months li:hover, .dp_days td:hover {
-    background-color: #C9DFEA;
+    background-color: #999;
+    color: #fff;
 }
 
 .dp_tagBox {
@@ -158,14 +143,8 @@ td.dp_current, li.dp_current {
 }
 
 input[type="submit"] {
-    background: -webkit-gradient(linear,left top,left bottom,color-stop(0.0,white),color-stop(1.0,#DEDEDE));
-    background: -moz-linear-gradient(top,white,#EAEAEA);
-    background: -webkit-gradient(linear,left top,left bottom,color-stop(0.0,white),color-stop(1.0,#DEDEDE));
-    border: 1px solid #dedede;
-    border-radius: 10px;
     float: right;
     font-size: 1em;
-    padding: 2% 3%;
     margin: 0;
     cursor: pointer;
 }
@@ -175,12 +154,9 @@ input[type="submit"] {
     padding: 1% 2%;
     float: left;
     cursor: pointer;
-    background: #B1D1E0;
+    background: #333;
+    color: #fff;
     font-size: 1.1em;
-}
-
-.dp_tag:hover {
-    background: #c9dfea;
 }
 
 /* clearfix */
