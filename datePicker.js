@@ -1,16 +1,14 @@
 /**
  * A new UI for picking dates
- * 
+ *
  * @constructor
- * @dependencies jQuery 1.7
- * 
- * @param {HTMLElement} input The input you want to make a date picker
- * @param {Object} options Overide the config defaults if you want to.
+ *
+ * @param {jQuery} input The input you want to make a date picker
+ * @param {Object=} options Overide the config defaults if you want to.
  */
 function DatePicker(input, options) {
-
     this.date = new Date();
-    this.input  = input;
+    this.input  = /** @type {jQuery} */( $(input) );
     this.config = {
         spacer: '/',
         order: ['month', 'day', 'year'],
@@ -47,42 +45,61 @@ function DatePicker(input, options) {
     }
     this.uniqueClass = 'dp_input_' + Math.floor(Math.random()*11);
     this.wrapper     = undefined;
-    
+
     $.extend({}, this.config, options);
+}
+
+/**
+ * @return {undefined}
+ */
+DatePicker.start = function () {
+   $(function(){
+        $('.date-picker').each(/** @param {Element} el */function(i, el){
+            if ( /** @type {string} */( el.nodeName ) !== 'INPUT' ) return;
+            var elem = /** @type {jQuery} */( $(el) );
+            var datePicker = new DatePicker(elem);
+            datePicker.init();
+        });
+    });
 }
 
 /**
  * @return {boolean}
  */
 DatePicker.prototype.init = function() {
-    if ( this.input.size() == 0 ) return false;
-    
+    var inputExists = /** @type {number} */( this.input.length );
+
+    if ( !inputExists ) return false;
+
     this.hideInput();
-    
-    this.wrapper = $(this.buildTagBox());
+
+    var wrapper  = /** @type {string} */( this.buildTagBox() );
+    this.wrapper = /** @type {jQuery} */( $(wrapper) );
+
     this.wrapper.insertAfter(this.input);
-    
+
     // Next: positioning
-    
-    this.bind.focusTagBoxInput(this);
-    this.bind.pickYear(this);
-    this.bind.pickMonth(this);
-    this.bind.pickDay(this);
-    this.bind.updateYear(this);
-    this.bind.updateMonth(this);
-    this.bind.updateDay(this);
-    this.bind.backspaceTagBoxInput(this);
-    this.bind.blurTagBoxInput(this);
-    this.bind.yearFuture(this);
-    this.bind.yearPast(this);
-    this.bind.forceFocusOnInput(this);
-    
+
+    this.bindFocusTagBoxInput();
+    this.bindPickYear();
+    this.bindPickMonth();
+    this.bindPickDay();
+    this.bindUpdateYear();
+    this.bindUpdateMonth();
+    this.bindUpdateDay();
+    this.bindBackspaceTagBoxInput();
+    this.bindBlurTagBoxInput();
+    this.bindYearFuture();
+    this.bindYearPast();
+    this.bindForceFocusOnInput();
+
     return true;
 }
 
 /**
  * Prepends the years, months or days into wrapper.
- * 
+ *
+ * @param {jQuery} content
  * @return {undefined}
  */
 DatePicker.prototype.insertDateChoice = function(content) {
@@ -91,7 +108,7 @@ DatePicker.prototype.insertDateChoice = function(content) {
 }
 
 /**
- *
+ * @return {undefined}
  */
 DatePicker.prototype.showCorrectDateChoice = function() {
     var that    = this,
@@ -99,399 +116,410 @@ DatePicker.prototype.showCorrectDateChoice = function() {
         month   = that.wrapper.find('.dp_tag.dp_tag_month'),
         day     = that.wrapper.find('.dp_tag.dp_tag_day'),
         choice;
-    
+
     // Nothing choosen yet
     if ( year.size() == 0 ) {
-        choice = $(that.build.yearRange(that, {start: that.config.year.start, 
-                                                 end: that.config.year.end}));
-            
+        choice = $(/** @type {string} */( that.buildYearRange({
+                    start: that.config.year.start,
+                    end: that.config.year.end
+                 })));
+
         that.insertDateChoice(choice);
         return;
     }
-    
+
     // Year is already choosen
     if ( year.size() > 0 && month.size() == 0 ) {
-        choice = $(that.build.months(that));
+        choice = $(/** @type {string} */( that.buildMonths() ));
         that.insertDateChoice(choice);
         return;
     }
-    
+
     // Year and Month is already choosen
     if ( year.size() > 0 && month.size() > 0 && day.size() == 0 ) {
-        choice = $(that.build.days(that));
+        choice = $(/** @type {string} */( that.buildDays() ));
         that.insertDateChoice(choice);
         return;
     }
-    
+
     // Year, Month and day is already choosen
 //    if ( year.size() > 0 && month.size() > 0 && day.size() > 0 ) {
-//        choice = $(that.build.days(that));
+//        choice = $(that.build.days());
 //        that.insertDateChoice(choice);
 //        return;
 //    }
-    
+
 }
 
 /**
- * Methods that build markup.
- * 
+ * Build the list of years to choose from.
+ *
+ * @param {Object} range
  * @return {string}
  */
-DatePicker.prototype.build = {
-    /**
-     * Build the list of years to choose from.
-     * 
-     * @param {!DatePicker} dpObj
-     * @param {Object} range
-     * @return {string}
-     */
-    yearRange: function(dpObj, range) {
-        var that  = dpObj,
-            div   = ['<div class="dp_years dp_choice">'],
-            start = range.start,
-            end   = range.end;
-            
-        if ( that.config.year.infinite ) {
-            div.push('<span class="dp_pastYears dp_yearNav">Past</span>');
-        }
-        
-        div.push('<ol>');
-        
+DatePicker.prototype.buildYearRange = function(range) {
+    var that  = /** @type {!DatePicker} */( this ),
+        div   = ['<div class="dp_years dp_choice">'],
+        start = /** @type {number} */( range.start ),
+        end   = /** @type {number} */( range.end );
 
-        // Build year list
-        for ( var i=start; i<(end + 1); i++ ) {
-            if(i == that.config.currentYear){
-                div.push('<li class="dp_year dp_current">' + i + '</li>');
-            }
-            else {
-                div.push('<li class="dp_year">' + i + '</li>');
-            }
-        }
-        
-        div.push('</ol>');
-        
-        if ( that.config.year.infinite ) {
-            div.push('<span class="dp_futureYears dp_yearNav">Future</span>');
-        }
-        
-        div.push('</div>');
-
-        return div.join('');
-    },
-    /**
-     * Build the months to pick from.
-     * 
-     * @param {!DatePicker} dpObj
-     * @return {string}
-     */
-    months: function(dpObj) {
-        var that   = dpObj,
-            months = that.config.months,
-            div    = ['<div class="dp_months dp_choice">'];
-
-        div.push('<ol>');
-        
-        for ( var month in months ) {
-            if ( months.hasOwnProperty(month) ) {
-                if(month == that.config.currentMonth && that.config.selected.year == that.config.currentYear) {
-                    div.push('<li class="dp_month dp_current" data-month="' + month + '">' + months[month] + '</li>');
-                }
-                else {
-                    div.push('<li class="dp_month" data-month="' + month + '">' + months[month] + '</li>');
-                }
-            }
-        }
-        
-        div.push('</ol>');
-
-        div.push('</div>');
-
-        return div.join('');
-    },
-    days: function(dpObj) {
-        var that               = dpObj,
-            days_in_each_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
-            year               = that.config.selected.year,
-            month              = that.config.selected.month,
-            howManyDays        = days_in_each_month[month];
-            
-        // February Leap Year Check
-        if ( month == 1 ) {
-            if ( (year % 4 == 0 && year % 100 != 0) || year % 400 == 0 ) {
-                howManyDays = 29;
-            }
-        }
-                
-        var date = new Date(year, month, 1),
-            day  = date.getDay(),
-            days = ['<div class="dp_choice dp_days">', '<table>', '<tr>'];
-        
-        // Prepend Days of Week Headers
-        days.push('<th>S</th>');
-        days.push('<th>M</th>');
-        days.push('<th>T</th>');
-        days.push('<th>W</th>');
-        days.push('<th>T</th>');
-        days.push('<th>F</th>');
-        days.push('<th>S</th>');
-        
-        days.push('</tr>');
-        days.push('<tr>');
-        
-        // Prepend empty days
-        for ( var p=0; p<day; p++ ) {
-            days.push('<td class="dp_day dp_empty_day"></td>');
-        }
-        
-        // Build days
-        for ( var i=1; i<=howManyDays; i++ ) {
-            if(i == that.config.currentDay 
-                && that.config.selected.year == that.config.currentYear
-                && that.config.selected.month == that.config.currentMonth) {
-               days.push('<td class="dp_day dp_day_' + day + ' dp_current">' + i + '</td>');
-            }
-            else {
-                days.push('<td class="dp_day dp_day_' + day + ' ">' + i + '</td>');
-            }
-            
-            if ( 6 == day ) {
-                day = 0;
-                days.push('</tr>');
-                days.push('<tr>');
-            } else {
-                day++;
-            }
-        }
-        
-        // Append empty days
-        if ( 0 != day ) {
-            var daysLeft = 7-day;
-            
-            for ( var d=0; d<daysLeft; d++) {
-                days.push('<td class="dp_day dp_empty_day"></td>');
-            }
-        }
-        
-        days.push('</tr>');
-        days.push('</table>');
-        days.push('</div>');
-        
-        return days.join('');
+    if ( that.config.year.infinite ) {
+        div.push('<span class="dp_pastYears dp_yearNav">Past</span>');
     }
-};
+
+    div.push('<ol>');
+
+
+    // Build year list
+    for ( var i=start; i<(end + 1); i++ ) {
+        if(i == that.config.currentYear){
+            div.push('<li class="dp_year dp_current">' + i + '</li>');
+        }
+        else {
+            div.push('<li class="dp_year">' + i + '</li>');
+        }
+    }
+
+    div.push('</ol>');
+
+    if ( that.config.year.infinite ) {
+        div.push('<span class="dp_futureYears dp_yearNav">Future</span>');
+    }
+
+    div.push('</div>');
+
+    return div.join('');
+}
 
 /**
- * 
+ * Build the months to pick from.
+ *
+ * @return {string}
  */
-DatePicker.prototype.bind = {
-    /**
-     * What happens when you focus the dynamic input?
-     * 
-     * @param {!DatePicker} dpObj
-     * @return {undefined}
-     */
-    focusTagBoxInput: function(dpObj) {
-        var that = dpObj;
+DatePicker.prototype.buildMonths = function() {
+    var that   = /** @type {!DatePicker} */( this ),
+        months = that.config.months,
+        div    = ['<div class="dp_months dp_choice">'];
 
-        that.wrapper.on('focus', 'input', function() {
-            if ( that.wrapper.find('.dp_choice').size() == 0 ) {
-                that.showCorrectDateChoice();
+    div.push('<ol>');
+
+    for ( var month in months ) {
+        if ( months.hasOwnProperty(month) ) {
+            var current = /** @type {boolean} */(
+                month == that.config.currentMonth
+                && that.config.selected.year == that.config.currentYear
+            );
+            var monthText = /** @type {string} */( months[month] );
+            if (current) {
+                div.push('<li class="dp_month dp_current" data-month="' + month + '">' + monthText + '</li>');
             }
-        });
-    },
-    /**
-     * Forces the input to be focused
-     * 
-     * @param {!DatePicker} dpObj
-     * @return {undefined}
-     */
-    forceFocusOnInput: function(dpObj) {
-        var that = dpObj;
-        
-        that.wrapper.on('click', '.dp_tagBox', function() {
-            that.wrapper.find('input').focus();
-        });
-    },
-    /**
-     * What happens when you blur the dynamic input?
-     * 
-     * @param {!DatePicker} dpObj
-     * @return {undefined}
-     */
-    blurTagBoxInput: function(dpObj) {
-        var that = dpObj;
-        
-        that.wrapper.on('blur', 'input', function() {
-            //that.wrapper.find('.dp_choice').remove();
-        });
-    },
-    /**
-     * What happens once you pick a year?
-     * 
-     * @param {!DatePicker} dpObj
-     * @return {undefined}
-     */
-    pickYear: function(dpObj) {
-        var that = dpObj;
-
-        that.wrapper.on('click', '.dp_year', function() {
-            var year = $(this).text();
-            
-            that.insertTag('year', year, year);
-            that.config.selected.year = year;
-
-            // Build the months after picking a year
-            var months = $(that.build.months(that));
-            that.insertDateChoice(months);
-            
-            // Remove dependant tags
-            that.wrapper.find('.dp_tag_month, .dp_tag_day').remove();
-            
-            that.updateHiddenInput();
-        });
-    },
-    /**
-     * @param {!DatePicker} dpObj
-     * @return {undefined}
-     */
-    pickMonth: function(dpObj) {
-        var that = dpObj;
-        
-        that.wrapper.on('click', '.dp_month', function() {
-            var month    = $(this).text(),
-                monthVal = $(this).data('month') + 1;
-            
-            that.insertTag('month', month, monthVal);
-            that.config.selected.month = $(this).data('month');
-            
-            // Build the days after picking a month
-            var days = $(that.build.days(that));
-            that.insertDateChoice(days);
-            
-            // Remove dependant tags
-            that.wrapper.find('.dp_tag_day').remove();
-            
-            that.updateHiddenInput();
-        });
-    },
-    /**
-     * @param {!DatePicker} dpObj
-     * @return {undefined}
-     */
-    pickDay: function(dpObj) {
-        var that = dpObj;
-        
-        that.wrapper.on('click', '.dp_day', function() {
-            var day = $(this).text();
-            
-            that.insertTag('day', day, day);
-            that.config.selected.day = day;
-            
-            that.updateHiddenInput();
-            that.wrapper.find('.dp_choice').remove();
-        });
-    },
-    /**
-     * @param {!DatePicker} dpObj
-     * @return {undefined}
-     */
-    updateYear: function(dpObj) {
-        var that = dpObj;
-        
-        that.wrapper.on('click', '.dp_tag_year', function() {
-            var yearConfig = that.config.year,
-                rangeChange =  yearConfig.rangeChange,
-                newStart  = yearConfig.start + rangeChange,
-                newEnd    = yearConfig.end + rangeChange,
-                years = $(that.build.yearRange(that, {start: newStart, end: newEnd}));
-                
-            that.insertDateChoice(years);
-        });
-    },
-    /**
-     * @param {!DatePicker} dpObj
-     * @return {undefined}
-     */
-    updateMonth: function(dpObj) {
-        var that = dpObj;
-        
-        that.wrapper.on('click', '.dp_tag_month', function() {
-            // Build the days
-            var months = $(that.build.months(that));
-            that.insertDateChoice(months);
-        });
-    },
-    /**
-     * @param {!DatePicker} dpObj
-     * @return {undefined}
-     */
-    updateDay: function(dpObj) {
-        var that = dpObj;
-        
-        that.wrapper.on('click', '.dp_tag_day', function() {
-            // Build the days
-            var days = $(that.build.days(that));
-            that.insertDateChoice(days);
-        });
-    },
-    /**
-     * @param {!DatePicker} dpObj
-     * @return {undefined}
-     */
-    backspaceTagBoxInput: function(dpObj) {
-        var that = dpObj;
-        
-        that.wrapper.on('keyup', 'input', function(e) {
-            var key = e.keyCode,
-                backspace = 8;
-            
-            if ( key == backspace ) {
-                that.wrapper.find('.dp_tag:first').remove();
-                that.showCorrectDateChoice();
-                that.updateHiddenInput();
+            else {
+                div.push('<li class="dp_month" data-month="' + month + '">' + monthText + '</li>');
             }
-        });
-    },
-    /**
-     * @param {!DatePicker} dpObj
-     * @return {undefined}
-     */
-    yearFuture: function(dpObj) {
-        var that       = dpObj,
-            yearConfig = that.config.year;
-            
-        that.wrapper.on('click', '.dp_futureYears', function(e) {
-            e.preventDefault();
-            
-            yearConfig.rangeChange = yearConfig.rangeChange + 9;
-            
-            var newStart = yearConfig.start + yearConfig.rangeChange,
-                newEnd   = yearConfig.end + yearConfig.rangeChange,
-                years    = $(that.build.yearRange(that, {start: newStart, end: newEnd}));
-        
-            that.insertDateChoice(years);    
-        });
-    },
-    /**
-     * @param {!DatePicker} dpObj
-     * @return {undefined}
-     */
-    yearPast: function(dpObj) {
-        var that       = dpObj,
-            yearConfig = that.config.year;
-            
-        that.wrapper.on('click', '.dp_pastYears', function(e) {
-            e.preventDefault();
-            
-            yearConfig.rangeChange = yearConfig.rangeChange - 9;
-            
-            var newStart = yearConfig.start + yearConfig.rangeChange,
-                newEnd   = yearConfig.end + yearConfig.rangeChange,
-                years    = $(that.build.yearRange(that, {start: newStart, end: newEnd}));
-        
-            that.insertDateChoice(years);    
-        });
+        }
     }
+
+    div.push('</ol>');
+
+    div.push('</div>');
+
+    return div.join('');
+}
+
+/**
+ * @return {string}
+ */
+DatePicker.prototype.buildDays = function() {
+    var that               = /** @type {!DatePicker} */( this ),
+        days_in_each_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
+        year               = that.config.selected.year,
+        month              = that.config.selected.month,
+        howManyDays        = /** @type {number} */( days_in_each_month[month] );
+
+    // February Leap Year Check
+    if ( month == 1 ) {
+        if ( (year % 4 == 0 && year % 100 != 0) || year % 400 == 0 ) {
+            howManyDays = 29;
+        }
+    }
+
+    var date = new Date(year, month, 1),
+        day  = date.getDay(),
+        days = ['<div class="dp_choice dp_days">', '<table>', '<tr>'];
+
+    // Prepend Days of Week Headers
+    days.push('<th>S</th>');
+    days.push('<th>M</th>');
+    days.push('<th>T</th>');
+    days.push('<th>W</th>');
+    days.push('<th>T</th>');
+    days.push('<th>F</th>');
+    days.push('<th>S</th>');
+
+    days.push('</tr>');
+    days.push('<tr>');
+
+    // Prepend empty days
+    for ( var p=0; p<day; p++ ) {
+        days.push('<td class="dp_day dp_empty_day"></td>');
+    }
+
+    // Build days
+    for ( var i=1; i<=howManyDays; i++ ) {
+        if(i == that.config.currentDay
+            && that.config.selected.year == that.config.currentYear
+            && that.config.selected.month == that.config.currentMonth) {
+           days.push('<td class="dp_day dp_day_' + day + ' dp_current">' + i + '</td>');
+        }
+        else {
+            days.push('<td class="dp_day dp_day_' + day + ' ">' + i + '</td>');
+        }
+
+        if ( 6 == day ) {
+            day = 0;
+            days.push('</tr>');
+            days.push('<tr>');
+        } else {
+            day++;
+        }
+    }
+
+    // Append empty days
+    if ( 0 != day ) {
+        var daysLeft = 7-day;
+
+        for ( var d=0; d<daysLeft; d++) {
+            days.push('<td class="dp_day dp_empty_day"></td>');
+        }
+    }
+
+    days.push('</tr>');
+    days.push('</table>');
+    days.push('</div>');
+
+    return days.join('');
+}
+
+/**
+ * What happens when you focus the dynamic input?
+ *
+ * @return {undefined}
+ */
+DatePicker.prototype.bindFocusTagBoxInput = function() {
+    this.wrapper.on('focus', 'input', function() {
+        var that = /** @type {!DatePicker} */( this );
+        if ( that.wrapper.find('.dp_choice').size() == 0 ) {
+            that.showCorrectDateChoice();
+        }
+    }.bind(this));
+}
+
+/**
+ * Forces the input to be focused
+ *
+ * @return {undefined}
+ */
+DatePicker.prototype.bindForceFocusOnInput = function() {
+    this.wrapper.on('click', '.dp_tagBox', function() {
+        var that = /** @type {!DatePicker} */( this );
+        that.wrapper.find('input').focus();
+    }.bind(this));
+}
+
+/**
+ * What happens when you blur the dynamic input?
+ *
+ * @return {undefined}
+ */
+DatePicker.prototype.bindBlurTagBoxInput = function() {
+    this.wrapper.on('blur', 'input', function() {
+        //var that = /** @type {!DatePicker} */( this );
+        //that.wrapper.find('.dp_choice').remove();
+    }.bind(this));
+}
+
+/**
+ * What happens once you pick a year?
+ *
+ * @return {undefined}
+ */
+DatePicker.prototype.bindPickYear = function() {
+    var config = /** @type {Object} */( this.config.selected );
+
+    this.wrapper.on('click', '.dp_year', /** @param {Event} e */function(e) {
+        var that = /** @type {!DatePicker} */( this ),
+            el   = /** @type {HTMLElement} */( e.target ),
+            $el  = /** @type {jQuery} */( $(el) ),
+            year = /** @type {string} */( $el.text() );
+
+        that.insertTag('year', year, year);
+        config.year = year;
+
+        // Build the months after picking a year
+        var monthsString = /** @type {string} */( that.buildMonths() ),
+            months       = /** @type {jQuery} */( $(monthsString) );
+
+        that.insertDateChoice(months);
+
+        // Remove dependant tags
+        that.wrapper.find('.dp_tag_month, .dp_tag_day').remove();
+
+        that.updateHiddenInput();
+    }.bind(this));
+}
+
+/**
+ * @return {undefined}
+ */
+DatePicker.prototype.bindPickMonth = function() {
+    var config = /** @type {Object} */( this.config.selected );
+
+    this.wrapper.on('click', '.dp_month', /** @param {Event} e */function(e) {
+        var that           = /** @type {!DatePicker} */( this ),
+            el             = /** @type {HTMLElement} */( e.target ),
+            $el            = /** @type {jQuery} */( $(el) ),
+            month          = /** @type {string} */( $el.text() ),
+            monthValString = /** @type {string} */( $el.data('month') ),
+            monthVal       = /** @type {number} */( Number(monthValString) + 1 );
+
+        that.insertTag('month', month, monthVal);
+        config.month = monthValString;
+
+        // Build the days after picking a month
+        var daysString = /** @type {string} */( that.buildDays() ),
+            days       = /** @type {jQuery} */( $(daysString) );
+
+        that.insertDateChoice(days);
+
+        // Remove dependant tags
+        that.wrapper.find('.dp_tag_day').remove();
+
+        that.updateHiddenInput();
+    }.bind(this));
+}
+
+/**
+ * @return {undefined}
+ */
+DatePicker.prototype.bindPickDay = function() {
+    var config = /** @type {Object} */( this.config.selected );
+
+    this.wrapper.on('click', '.dp_day', /** @param {Event} e */function(e) {
+        var that = /** @type {!DatePicker} */( this ),
+            el   = /** @type {HTMLElement} */( e.target ),
+            $el  = /** @type {jQuery} */( $(el) ),
+            day  = /** @type {string} */( $el.text() );
+
+        that.insertTag('day', day, day);
+        config.day = day;
+
+        that.updateHiddenInput();
+        that.wrapper.find('.dp_choice').remove();
+    }.bind(this));
+}
+
+/**
+ * @return {undefined}
+ */
+DatePicker.prototype.bindUpdateYear = function() {
+    var config     = /** @type {Object} */( this.config ),
+        yearConfig = /** @type {Object} */( config.year );
+
+    this.wrapper.on('click', '.dp_tag_year', function() {
+        var that        = /** @type {!DatePicker} */( this ),
+            rangeChange = /** @type {number} */( yearConfig.rangeChange ),
+            newStart    = /** @type {number} */( yearConfig.start ) + rangeChange,
+            newEnd      = /** @type {number} */( yearConfig.end )+ rangeChange,
+            yearsString = /** @type {string} */( that.buildYearRange({start: newStart, end: newEnd}) ),
+            years       = /** @type {jQuery} */( $(yearsString) );
+
+        that.insertDateChoice(years);
+    }.bind(this));
+}
+
+/**
+ * @return {undefined}
+ */
+DatePicker.prototype.bindUpdateMonth = function() {
+    this.wrapper.on('click', '.dp_tag_month', function() {
+        // Build the days
+        var that         = /** @type {!DatePicker} */( this ),
+            monthsString = /** @type {string} */( that.buildMonths() ),
+            months       = /** @type {jQuery} */( $(monthsString) );
+
+        that.insertDateChoice(months);
+    }.bind(this));
+}
+
+/**
+ * @return {undefined}
+ */
+DatePicker.prototype.bindUpdateDay = function() {
+    this.wrapper.on('click', '.dp_tag_day', function() {
+        // Build the days
+        var that       = /** @type {!DatePicker} */( this ),
+            daysString = /** @type {string} */( that.buildDays() ),
+            days       = /** @type {jQuery} */( $(daysString) );
+
+        that.insertDateChoice(days);
+    }.bind(this));
+}
+
+/**
+ * @return {undefined}
+ */
+DatePicker.prototype.bindBackspaceTagBoxInput = function() {
+    this.wrapper.on('keyup', 'input', /** @param {Event} e */function(e) {
+        var that      = /** @type {!DatePicker} */( this ),
+            key       = /** @type {number} */( e.keyCode ),
+            backspace = 8;
+
+        if ( key == backspace ) {
+            that.wrapper.find('.dp_tag:first').remove();
+            that.showCorrectDateChoice();
+            that.updateHiddenInput();
+        }
+    }.bind(this));
+}
+
+/**
+ * @return {undefined}
+ */
+DatePicker.prototype.bindYearFuture = function() {
+    var yearConfig = /** @type {Object} */( this.config.year );
+
+    this.wrapper.on('click', '.dp_futureYears', /** @param {Event} e */function(e) {
+        e.preventDefault();
+        yearConfig.rangeChange = /** @type {number} */( yearConfig.rangeChange ) + 9;
+
+        var that        = /** @type {!DatePicker} */( this ),
+            newStart    = /** @type {number} */( yearConfig.start ) + /** @type {number} */( yearConfig.rangeChange ),
+            newEnd      = /** @type {number} */( yearConfig.end ) + /** @type {number} */( yearConfig.rangeChange ),
+            yearsString = /** @type {string} */( that.buildYearRange({start: newStart, end: newEnd}) ),
+            years       = /** @type {jQuery} */( $(yearsString) );
+
+        that.insertDateChoice(years);
+    }.bind(this));
+}
+
+/**
+ * @return {undefined}
+ */
+DatePicker.prototype.bindYearPast = function() {
+    var yearConfig = /** @type {Object} */( this.config.year );
+
+    this.wrapper.on('click', '.dp_pastYears', /** @param {Event} e */function(e) {
+        e.preventDefault();
+        yearConfig.rangeChange = /** @type {number} */( yearConfig.rangeChange ) - 9;
+
+        var that        = /** @type {!DatePicker} */( this ),
+            newStart    = /** @type {number} */( yearConfig.start ) + /** @type {number} */( yearConfig.rangeChange ),
+            newEnd      = /** @type {number} */( yearConfig.end ) + /** @type {number} */( yearConfig.rangeChange ),
+            yearsString = /** @type {string} */( that.buildYearRange({start: newStart, end: newEnd}) ),
+            years       = /** @type {jQuery} */( $(yearsString) );
+
+        that.insertDateChoice(years);
+    }.bind(this));
 }
 
 /**
@@ -499,22 +527,20 @@ DatePicker.prototype.bind = {
  */
 DatePicker.prototype.updateHiddenInput = function() {
     var that  = this,
+        input = /** @type {jQuery} */( that.input ),
         tag   = that.wrapper.find('.dp_tag'),
         value = '',
         order = that.config.order;
-    
-    that.input.val('');
-    
+
+    input.val('');
+
     for ( var i=0; i<order.length; i++ ) {
-        if ( i < 2 ) {
-            value += $('.dp_tag_' + order[i]).data('valuesubmitted') + that.config.spacer;
-        } else {
-            value += $('.dp_tag_' + order[i]).data('valuesubmitted');
-        }
-        
+        var valueSubmitted = /** @type {string} */( $('.dp_tag_' + /** @type {string} */( order[i] )).data('valuesubmitted') );
+        value += valueSubmitted;
+        if ( i < 2 ) value += that.config.spacer;
     }
-    
-    that.input.val(value);
+
+    input.val(value);
 }
 
 /**
@@ -536,18 +562,18 @@ DatePicker.prototype.insertTag = function(type, valueDisplayed, valueSubmitted) 
 }
 
 /**
- * @return {undefined}
+ * @return {string}
  */
 DatePicker.prototype.buildTagBox = function() {
     var classes = 'dp_wrapper ' + this.uniqueClass,
         config  = this.config;
-    
+
     if ( 'absolute' == config.position ) {
         classes += (' ' + config.position + ' ' + config.where);
     }
-    
+
     var div = '<div class="' + classes + '"><div class="dp_tagBox"><input type="text"></div></div>';
-    
+
     return div;
 }
 
@@ -555,8 +581,8 @@ DatePicker.prototype.buildTagBox = function() {
  * @return {undefined}
  */
 DatePicker.prototype.hideInput = function() {
-    this.input.hide();
+    var input = /** @type {jQuery} */( this.input );
+    input.hide();
 }
 
-var datePicker = new DatePicker($('#datePicker'));
-datePicker.init();
+DatePicker.start();
