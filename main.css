@@ -23,6 +23,7 @@ ol {
 }
 
 .dp_choice {
+    clear: left;
     margin: 5px 0 15px;
 }
 
@@ -127,6 +128,7 @@ td.dp_current, li.dp_current {
     float: left;
     font-size: 1.4em;
     padding: 2%;
+    min-height: 1.4em;
     cursor: text;
     margin-bottom: 5px;
 }
