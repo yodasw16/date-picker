@@ -10,13 +10,13 @@ function DatePicker(input, options) {
     this.date = new Date();
     this.input  = /** @type {jQuery} */( $(input) );
     this.config = {
-        spacer: '/',
+        spacer: '-',
         order: ['month', 'day', 'year'],
         year: {
-            start: 2004,
-            end: 2012,
+            start: this.input.data('bound-start') || 2005,
+            end: this.input.data('bound-end') || 2013,
             rangeChange: 0,
-            infinite: true
+            infinite: this.input.data('infinite') || false
         },
         selected: {
             year: '',
@@ -76,6 +76,12 @@ DatePicker.prototype.init = function() {
     var wrapper  = /** @type {string} */( this.buildTagBox() );
     this.wrapper = /** @type {jQuery} */( $(wrapper) );
 
+    var defaultDate = this.input.val();
+
+    if (defaultDate) {
+        this.insertDefaultDate( defaultDate.match(/(\d+)-(\d+)-(\d+)/) );
+    }
+
     this.wrapper.insertAfter(this.input);
 
     // Next: positioning
@@ -91,9 +97,34 @@ DatePicker.prototype.init = function() {
     this.bindBlurTagBoxInput();
     this.bindYearFuture();
     this.bindYearPast();
-    this.bindForceFocusOnInput();
 
     return true;
+}
+
+/**
+ * @param {Array} dateMatch
+ * @return {undefined}
+ */
+DatePicker.prototype.insertDefaultDate = function(dateMatch) {
+    var month  = /** @type {number} */(parseInt(dateMatch[1], 10) - 1),
+        day    = /** @type {string} */(dateMatch[2]),
+        year   = /** @type {string} */(dateMatch[3]),
+        config = /** @type {Object} */(this.config.selected);
+
+    if (year) {
+        config.year = parseInt(year, 10);
+        this.insertTag('year', year, year);
+    }
+
+    if (month) {
+        config.month = month;
+        this.insertTag('month', this.config.months[month], month);
+    }
+
+    if (day) {
+        config.day = parseInt(day, 10);
+        this.insertTag('day', day, day);
+    }
 }
 
 /**
@@ -104,7 +135,8 @@ DatePicker.prototype.init = function() {
  */
 DatePicker.prototype.insertDateChoice = function(content) {
     this.wrapper.find('.dp_choice').remove();
-    this.wrapper.prepend(content);
+
+    this.wrapper.append(content);
 }
 
 /**
@@ -158,32 +190,30 @@ DatePicker.prototype.showCorrectDateChoice = function() {
  * @return {string}
  */
 DatePicker.prototype.buildYearRange = function(range) {
-    var that  = /** @type {!DatePicker} */( this ),
-        div   = ['<div class="dp_years dp_choice">'],
-        start = /** @type {number} */( range.start ),
-        end   = /** @type {number} */( range.end );
+    var that      = /** @type {!DatePicker} */( this ),
+        div       = ['<div class="dp_years dp_choice">'],
+        start     = /** @type {number} */( range.start ),
+        end       = /** @type {number} */( range.end ),
+        diff      = /** @type {number} */( end - start ),
+        arrows    = /** @type {boolean} */( diff > 3 || this.config.year.infinite ),
+        width     = /** @type {boolean} */( false );
 
-    if ( that.config.year.infinite ) {
-        div.push('<span class="dp_pastYears dp_yearNav">Past</span>');
+    if ( arrows ) {
+        div.push('<span class="dp_pastYears dp_yearNav"><figure><figcaption>Past</figcaption></figure></span>');
     }
 
-    div.push('<ol>');
-
+    div.push('<ol class="cols-' + diff + '">');
 
     // Build year list
     for ( var i=start; i<(end + 1); i++ ) {
-        if(i == that.config.currentYear){
-            div.push('<li class="dp_year dp_current">' + i + '</li>');
-        }
-        else {
-            div.push('<li class="dp_year">' + i + '</li>');
-        }
+        var className = i == this.config.currentYear ? ' dp_current' : '';
+        div.push('<li class="dp_year' + className + '">' + i + '</li>');
     }
 
     div.push('</ol>');
 
-    if ( that.config.year.infinite ) {
-        div.push('<span class="dp_futureYears dp_yearNav">Future</span>');
+    if ( arrows ) {
+        div.push('<span class="dp_futureYears dp_yearNav"><figure><figcaption>Past</figcaption></figure></span>');
     }
 
     div.push('</div>');
@@ -278,7 +308,9 @@ DatePicker.prototype.buildDays = function() {
         if ( 6 == day ) {
             day = 0;
             days.push('</tr>');
-            days.push('<tr>');
+            if (i != howManyDays) {
+                days.push('<tr>');
+            }
         } else {
             day++;
         }
@@ -306,23 +338,11 @@ DatePicker.prototype.buildDays = function() {
  * @return {undefined}
  */
 DatePicker.prototype.bindFocusTagBoxInput = function() {
-    this.wrapper.on('focus', 'input', function() {
+    this.wrapper.on('click', '.dp_tagBox', function() {
         var that = /** @type {!DatePicker} */( this );
         if ( that.wrapper.find('.dp_choice').size() == 0 ) {
             that.showCorrectDateChoice();
         }
-    }.bind(this));
-}
-
-/**
- * Forces the input to be focused
- *
- * @return {undefined}
- */
-DatePicker.prototype.bindForceFocusOnInput = function() {
-    this.wrapper.on('click', '.dp_tagBox', function() {
-        var that = /** @type {!DatePicker} */( this );
-        that.wrapper.find('input').focus();
     }.bind(this));
 }
 
@@ -552,12 +572,19 @@ DatePicker.prototype.updateHiddenInput = function() {
 DatePicker.prototype.insertTag = function(type, valueDisplayed, valueSubmitted) {
     var that   = this,
         tagBox = that.wrapper.find('.dp_tagBox'),
-        tag    = tagBox.find('.dp_tag.dp_tag_' + type);
+        tag    = tagBox.find('.dp_tag.dp_tag_' + type),
+        html   = $('<span class="dp_tag dp_tag_' + type + '" data-valuesubmitted="' + valueSubmitted + '">' + valueDisplayed + '</span>');
 
     if ( tag.size() > 0 ) {
         tag.text(valueDisplayed);
+        return;
+    }
+
+    if ( type === 'day' ) {
+        var year = that.wrapper.find('.dp_tag_year');
+        html.insertBefore(year);
     } else {
-        tagBox.prepend('<span class="dp_tag dp_tag_' + type + '" data-valuesubmitted="' + valueSubmitted + '">' + valueDisplayed + '</span>');
+        tagBox.prepend(html);
     }
 }
 
@@ -572,7 +599,7 @@ DatePicker.prototype.buildTagBox = function() {
         classes += (' ' + config.position + ' ' + config.where);
     }
 
-    var div = '<div class="' + classes + '"><div class="dp_tagBox"><input type="text"></div></div>';
+    var div = '<div class="' + classes + '"><div class="dp_tagBox"></div></div>';
 
     return div;
 }
@@ -582,7 +609,6 @@ DatePicker.prototype.buildTagBox = function() {
  */
 DatePicker.prototype.hideInput = function() {
     var input = /** @type {jQuery} */( this.input );
+    input.removeAttr('tabindex');
     input.hide();
 }
-
-DatePicker.start();
