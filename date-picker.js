@@ -199,7 +199,7 @@ DatePicker.prototype.buildYearRange = function(range) {
         width     = /** @type {boolean} */( false );
 
     if ( arrows ) {
-        div.push('<span class="dp_pastYears dp_yearNav"><figure><figcaption>Past</figcaption></figure></span>');
+        div.push('<span class="dp_pastYears dp_yearNav">▲</span>');
     }
 
     div.push('<ol class="cols-' + diff + '">');
@@ -213,7 +213,7 @@ DatePicker.prototype.buildYearRange = function(range) {
     div.push('</ol>');
 
     if ( arrows ) {
-        div.push('<span class="dp_futureYears dp_yearNav"><figure><figcaption>Past</figcaption></figure></span>');
+        div.push('<span class="dp_futureYears dp_yearNav">▼</span>');
     }
 
     div.push('</div>');

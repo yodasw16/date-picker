@@ -51,21 +51,18 @@ ol {
 }
 
 .dp_yearNav {
-    text-indent: -9999px;
     display: block;
-    background: #666 url(icons/icons.png) no-repeat 0 0;
-    height: 30px;
-    padding: 10px 0;
     text-decoration: none;
     cursor: pointer;
+    background: #ccc;
+    text-align: center;
+    padding: 10px 0;
 }
 
 .dp_pastYears {
-    background-position: 50% 0;
 }
 
 .dp_futureYears {
-    background-position: 50% -40px;
 }
 
 .dp_days {
