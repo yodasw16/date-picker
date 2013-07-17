@@ -8,4 +8,4 @@
 
 ### Useage
 
-	`DatePicker.start();`
+	DatePicker.start();
