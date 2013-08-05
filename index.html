@@ -1,3 +1,4 @@
+<!doctype html>
 <html>
     <head>
         <title>Date Picker Demo</title>
@@ -12,16 +13,9 @@
             <p><a href="https://github.com/QuickenLoans/date-picker">Fork it!</a></p>
             <form class="date-picker">
                 <label>Date</label>
-                <input class="date-picker" type="text" id="datePicker">
+                <input class="date-picker" type="date" id="datePicker">
                 <input type="submit" value="submit">
             </form>
-
-            <script src="http://code.jquery.com/jquery.min.js"></script>
-            <script src="date-picker.js"></script>
-            <script>
-                // to start the DatePicker:
-                DatePicker.start();
-            </script>
         </div>
 
         <footer>
@@ -29,5 +23,11 @@
                 <img src="http://devtroit.com/img/badges/badge-medium.png" alt="Developed in Detroit">
             </a>
         </footer>
+		<script src="http://code.jquery.com/jquery.min.js"></script>
+		<script src="date-picker.js"></script>
+		<script>
+			// to start the DatePicker:
+			jQuery('.date-picker').datepicker();
+		</script>
     </body>
 </html>

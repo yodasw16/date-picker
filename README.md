@@ -6,6 +6,6 @@
  - jQuery
  - ie8 +
 
-### Useage
+### Usage
 
-	DatePicker.start();
+	$('input').datepicker();
