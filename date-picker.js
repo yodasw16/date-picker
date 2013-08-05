@@ -72,8 +72,6 @@
 		this.bindUpdateYear();
 		this.bindUpdateMonth();
 		this.bindUpdateDay();
-		//this.bindBackspaceTagBoxInput();
-		//this.bindBlurTagBoxInput();
 		this.bindYearFuture();
 		this.bindYearPast();
 
@@ -314,18 +312,6 @@
 	};
 
 	/**
-	 * What happens when you blur the dynamic input?
-	 * 
-	 * @todo The input is hidden so this isn't bound to anything.
-	 * @return {undefined}
-	 */
-//	DatePicker.prototype.bindBlurTagBoxInput = function (){
-//		this.wrapper.on('blur', 'input', function (){
-//			this.wrapper.find('.dp_choice').remove();
-//		}.bind(this));
-//	};
-
-	/**
 	 * What happens once you pick a year?
 	 *
 	 * @return {undefined}
@@ -424,24 +410,6 @@
 			this.insertDateChoice(this.buildDays());
 		}.bind(this));
 	};
-
-	/**
-	 * I don't think this can actually do anything right now since the input is hidden.
-	 * @todo The input is hidden so this isn't bound to anything.
-	 * @return {undefined}
-	 */
-//	DatePicker.prototype.bindBackspaceTagBoxInput = function (){
-//		this.wrapper.on('keyup', 'input', /** @param {Event} e */function (e){
-//			var key       = /** @type {number} */( e.keyCode ),
-//				backspace = 8;
-//
-//			if ( key === backspace ){
-//				this.wrapper.find('.dp_tag:first').remove();
-//				this.showCorrectDateChoice();
-//				this.updateHiddenInput();
-//			}
-//		}.bind(this));
-//	};
 
 	/**
 	 * Offset the range of years by a specified amount.
@@ -555,13 +523,14 @@
 
 	/**
 	 * jQuery Pluginify
-	 * Only operates on input elements.
+	 * Only operates on input[type='date'] elements.
 	 *
 	 * @param {object} options
 	 */
 	$.fn.datepicker = function (options){
 		return this.each(/** @param {Element} el */function (i, el){
-			if (/** @type {string} */(el.nodeName) !== 'INPUT'){
+			if (/** @type {string} */(el.nodeName) !== 'INPUT'
+				|| /** @type {string} */(el.getAttribute('type')) !== "date"){
 				return;
 			}
 			new DatePicker(el, options);
