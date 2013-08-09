@@ -8,4 +8,4 @@
 
 ### Usage
 
-	$('input').datepicker();
+	$('.some-selector').datepicker();
